@@ -5,7 +5,9 @@
     <div v-if="posts.length">
       <PostList :posts="posts" />
     </div>
-    <div v-else>Loading...</div>
+    <div v-else>
+      <Spinner />
+    </div>
     <!-- // lifecycle practice -->
     <!-- <PostList v-if="showPosts" :posts="posts" />
     <button @click="showPosts = !showPosts">toggle posts</button>
@@ -17,29 +19,16 @@
 <script>
 import { ref } from 'vue'
 import PostList from '../components/PostList.vue'
+import getPosts from '../composables/getPosts'
+import Spinner from '../components/Spinner.vue'
 // lifecycle practice
 // import { computed, ref, watch,watchEffect } from 'vue'
 
 export default {
   name: 'Home',
-  components: { PostList },
+  components: { PostList, Spinner },
   setup() {
-    const posts = ref([])
-    const error = ref(null)
-
-    const load = async () => {
-      try {
-        let data = await fetch('http://localhost:3000/posts')
-        if (!data.ok) {
-          throw Error('no data available')
-        }
-        posts.value = await data.json()
-      }
-      catch (err) {
-        error.value = err.message
-        console.log(error.value);
-      }
-    }
+    const { posts, error, load } = getPosts()
 
     load()
 
